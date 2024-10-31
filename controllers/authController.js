@@ -18,7 +18,17 @@ exports.postSignup = async (req, res, next) => {
 		const newUser = new userModel({ name: name, imageUrl: imageUrl, email: email, password: hashedPass });
 		await newUser.save();
 
-		res.status(201).json({ user: newUser, message: 'Signup Successfully!' });
+		const isMatch = await bcrypt.compare(password, newUser.password);
+
+		if (!isMatch) customError(422, 'Email or password incorrect!');
+
+		const token = jwt.sign({ email: newUser.email, userId: newUser._id.toString() }, process.env.JWT_SECRET, { expiresIn: '120h' })
+
+		res.status(201).json({
+			user: newUser,
+			token: token,
+			message: 'Signup Successfully!'
+		});
 	} catch (error) {
 		console.log(error);
 		next(error);
