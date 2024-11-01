@@ -3,6 +3,7 @@ const userModel = require('../model/user');
 const chatModel = require('../model/chat');
 const customError = require('../utils/customError');
 // const objectId = require('mongoose').Types.ObjectId;
+const socket = require('../socket');
 
 exports.getUrContact = async (req, res, next) => {
 	try {
@@ -40,7 +41,6 @@ exports.getUrContact = async (req, res, next) => {
 				isReceiver: false
 			}
 		})
-		// console.log(usersWithLastMessage);
 
 		res.status(200).json({
 			users: usersWithLastMessage,
@@ -58,11 +58,49 @@ exports.sendMessage = async (req, res, next) => {
 
 		if (!msg || !receiver_id) customError(422, 'empty message');
 
-		const newMsg = new chatModel({ message: msg, sender_id: req.userId.toString(), receiver_id: receiver_id.toString() });
+		const newMsg = new chatModel({
+			message: msg,
+			sender_id: req.userId.toString(),
+			receiver_id: receiver_id.toString()
+		});
+
 		await newMsg.save();
-		res.status(201).json({ newMsg: newMsg, message: 'Sent Successfully!' });
+
+		socket.getIO().emit('send', {
+			action: 'sendMsg',
+			message: newMsg
+		})
+
+		res.status(201).json({
+			newMsg: newMsg,
+			message: 'Sent Successfully!'
+		});
 
 	} catch (error) {
 		next(error);
 	}
 }
+
+exports.renderChat = async (req, res, next) => {
+	try {
+		const receiver_id = req.params.receiver_id;
+		if (!receiver_id) customError(404, 'this chat not exits!');
+
+		const chatMessages = await chatModel.find({
+			$or: [
+				{ sender_id: req.userId, receiver_id: receiver_id },
+				{ sender_id: receiver_id, receiver_id: req.userId }
+			]
+		}).sort({ timestamp: -1 });
+
+		res.status(200).json({
+			message: `This is the messages between ${req.userId} and ${receiver_id}`,
+			messages: chatMessages
+		})
+
+	} catch (error) {
+		next(error);
+	}
+}
+
+

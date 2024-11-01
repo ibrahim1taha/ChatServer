@@ -6,7 +6,7 @@ module.exports = (req, res, next) => {
 	const authFromHeader = req.get('Authorization');
 	if (!authFromHeader) customError(401, 'Unauthorized');
 
-	const token = authFromHeader.split(' ')[1] // ['Bearer' , 'token' ]
+	const token = authFromHeader.split(' ')[1]
 
 	let decodedToken;
 	try {

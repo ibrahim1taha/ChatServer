@@ -1,9 +1,13 @@
+const { createServer } = require('http');
 const express = require('express');
 const app = express();
 require('dotenv').config()
 const bodyParser = require('body-parser');
 const connectDB = require('./config/Database');
 const cors = require('cors')
+const { Server } = require('socket.io');
+const socket = require('./socket');
+const httpServer = createServer(app);
 
 // routes 
 const authRoutes = require('./routes/authRoutes');
@@ -18,7 +22,7 @@ app.use(bodyParser.json());
 app.use('/auth', authRoutes);
 app.use('/chat', chatRoutes);
 
-// Error middlewaer 
+// Error handler 
 app.use((error, req, res, next) => {
 	const status = error.statusCode || 500;
 	res.status(status).json({
@@ -27,7 +31,18 @@ app.use((error, req, res, next) => {
 	})
 })
 
-app.listen(8080, () => {
+// socket server 
+const io = socket.initSocket(httpServer);
+
+io.on('connection', socket => {
+	console.log(`${socket.id} connected`);
+
+	socket.on('disconnect', () => {
+		console.log(`${socket.id} disconnected`);
+	})
+})
+
+httpServer.listen(8080, () => {
 	console.log('Server run successfully!');
 });
 

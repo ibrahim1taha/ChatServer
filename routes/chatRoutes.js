@@ -9,4 +9,6 @@ router.get('/urContact', isAuth, chatController.getUrContact)
 
 router.post('/send', isAuth, chatController.sendMessage)
 
+router.get('/renderChat/:receiver_id', isAuth, chatController.renderChat)
+
 module.exports = router; 
