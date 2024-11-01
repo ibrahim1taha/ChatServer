@@ -8,8 +8,8 @@ const socket = require('../socket');
 exports.getUrContact = async (req, res, next) => {
 	try {
 		const userId = req.userId;
-
 		const users = await userModel.find({ _id: { $ne: userId } })
+
 		if (!users) customError(404, 'no users found');
 
 		const thisUserChats = await chatModel.find({
@@ -18,12 +18,11 @@ exports.getUrContact = async (req, res, next) => {
 				{ receiver_id: userId }
 			]
 		}).sort({ timestamp: -1 });
-
 		// adding to each user last message with the sender user .
 		const usersWithLastMessage = users.map(user => {
 			for (const chat of thisUserChats) {
-				const isUserSender = (chat.receiver_id === userId && chat.sender_id.user._id.toString());
-				const isUserReceiver = (chat.sender_id === userId && chat.receiver_id === user._id.toString());
+				const isUserSender = (chat.receiver_id.toString() === userId && chat.sender_id.toString() === user._id.toString());
+				const isUserReceiver = (chat.sender_id.toString() === userId && chat.receiver_id.toString() === user._id.toString());
 				if (isUserSender || isUserReceiver) {
 					return {
 						...user._doc,

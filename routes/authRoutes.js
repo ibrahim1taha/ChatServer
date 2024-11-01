@@ -19,7 +19,6 @@ router.post('/signup', upload.single('image'), [
 	})
 ], authController.postSignup);
 
-
 router.post('/login', authController.postLogin)
 
-module.exports = router; 
+module.exports = router;
