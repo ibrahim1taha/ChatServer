@@ -20,9 +20,9 @@ app.use('/chat', chatRoutes);
 
 // Error middlewaer 
 app.use((error, req, res, next) => {
-	console.log(error);
 	const status = error.statusCode || 500;
 	res.status(status).json({
+		status: status,
 		message: error.message
 	})
 })

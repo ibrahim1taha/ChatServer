@@ -9,7 +9,7 @@ exports.postSignup = async (req, res, next) => {
 		const validationErr = validationResult(req);
 		if (!validationErr.isEmpty()) {
 			console.log(validationErr.array());
-			customError(428, validationErr.array()[0].msg);
+			customError(400, validationErr.array()[0].msg);
 		}
 
 		const { name, imageUrl, email, password } = req.body;
@@ -30,7 +30,7 @@ exports.postSignup = async (req, res, next) => {
 			message: 'Signup Successfully!'
 		});
 	} catch (error) {
-		console.log(error);
+		// console.log(error);
 		next(error);
 	}
 }
