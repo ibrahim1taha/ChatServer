@@ -5,7 +5,10 @@ const authController = require('../controllers/authController');
 const { body } = require('express-validator');
 const customError = require('../utils/customError');
 
-router.post('/signup', [
+// upload file middleware 
+const upload = require('../middleware/fileUploaded');
+
+router.post('/signup', upload.single('image'), [
 	body('email').isEmail().normalizeEmail().custom(async (val, { req }) => {
 		const user = await userModel.findOne({ email: val });
 		if (user) return Promise.reject('Email already exists!')

@@ -1,4 +1,5 @@
 const userModel = require('../model/user');
+const path = require('path');
 const { validationResult } = require('express-validator');
 const customError = require('../utils/customError');
 const bcrypt = require('bcryptjs');
@@ -12,8 +13,11 @@ exports.postSignup = async (req, res, next) => {
 			customError(400, validationErr.array()[0].msg);
 		}
 
-		const { name, imageUrl, email, password } = req.body;
+		const { name, email, password } = req.body;
 		const hashedPass = await bcrypt.hash(password, 12);
+
+
+		imageUrl = req.file ? req.file.path.replace("\\", "/") : 'default'
 
 		const newUser = new userModel({ name: name, imageUrl: imageUrl, email: email, password: hashedPass });
 		await newUser.save();

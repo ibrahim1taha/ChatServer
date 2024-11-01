@@ -1,3 +1,4 @@
+const path = require('path');
 const { createServer } = require('http');
 const express = require('express');
 const app = express();
@@ -9,6 +10,7 @@ const { Server } = require('socket.io');
 const socket = require('./socket');
 const httpServer = createServer(app);
 
+
 // routes 
 const authRoutes = require('./routes/authRoutes');
 const chatRoutes = require('./routes/chatRoutes');
@@ -17,6 +19,7 @@ connectDB();
 
 app.use(cors())
 
+app.use('/images', express.static(path.join(__dirname, 'images')))
 app.use(bodyParser.json());
 
 app.use('/auth', authRoutes);
