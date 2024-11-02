@@ -40,7 +40,7 @@ exports.getUrContact = async (req, res, next) => {
 				isReceiver: false
 			}
 		})
-
+		// console.log(usersWithLastMessage);
 		res.status(200).json({
 			users: usersWithLastMessage,
 			message: 'users fetched successfully!'
@@ -90,7 +90,7 @@ exports.renderChat = async (req, res, next) => {
 				{ sender_id: req.userId, receiver_id: receiver_id },
 				{ sender_id: receiver_id, receiver_id: req.userId }
 			]
-		}).sort({ timestamp: -1 });
+		}).sort({ timestamp: 1 });
 
 		res.status(200).json({
 			message: `This is the messages between ${req.userId} and ${receiver_id}`,
