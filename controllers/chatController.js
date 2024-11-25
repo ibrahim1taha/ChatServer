@@ -52,6 +52,9 @@ exports.getUrContact = async (req, res, next) => {
 				}
 			},
 			{
+				$unwind: { path: "$usersWithLastMsg", "preserveNullAndEmptyArrays": true }
+			},
+			{
 				$project: {
 					email: 0,
 					password: 0,
