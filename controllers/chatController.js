@@ -9,7 +9,7 @@ exports.getUrContact = async (req, res, next) => {
 		const OurUserId = req.userId
 		let newUsersWithLastMessage = await userModel.aggregate([
 			{
-				$match: { _id: { $ne: OurUserId } }
+				$match: { _id: { $ne: new objectId(OurUserId) } }
 			},
 			{
 				$lookup: {
