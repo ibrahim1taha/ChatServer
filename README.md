@@ -71,3 +71,6 @@ chatserver/
 - `send` - Emitted when a new message is sent
 - `connection` - When a user connects via Socket.io
 - `disconnect` - When a user disconnects
+
+## Project Demo 
+[here](https://www.linkedin.com/feed/update/urn:li:activity:7272319571775115264/)
